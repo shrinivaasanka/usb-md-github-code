@@ -1,0 +1,149 @@
+/*****************************************************************************************
+USBmd - an experimental USB driver for debugging 
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+--------------------------------------------------------------------------------------------------
+Copyright(C):
+Srinivasan Kannan (alias) Ka.Shrinivaasan (alias) Shrinivas Kannan
+Independent Open Source Developer, Researcher and Consultant
+Ph: 9789346927, 9003082186, 9791165980
+Open Source Products Profile(Krishna iResearch): 
+http://sourceforge.net/users/ka_shrinivaasan,
+https://www.ohloh.net/accounts/ka_shrinivaasan
+Personal website(research): https://sites.google.com/site/kuja27/
+emails: ka.shrinivaasan@gmail.com, shrinivas.kannan@gmail.com, kashrinivaasan@live.com
+--------------------------------------------------------------------------------------------------
+
+*****************************************************************************************/
+
+
+USBmd driver is an experimental modified version of already existing USB driver in linux.
+
+Purpose of this modified version is for doing more sophisticated debugging of USB endpoints and devices and as
+USB packet sniffer. Technical Necessity for this was created due to prolonged data theft, id spoofing and cybercrime that has been happening 
+in author's personal electronic devices for years that resulted in a Cybercrime Police Complaint also few years ago.  
+
+There were also such incidents while developing open source code (some code commits have description of these mysterious occurrences). There is no comprehensive USB debugger available on linux to sift bad traffic though there are strong evidences of such cybercrime and datatheft through other sources. Author is inclined to believe that such recurring events of datatheft that defies all logic can have no other intent but to cause malafide theft or loss of private data and an act of defamation among other things. 
+
+This is also done as a technical learning exercise to analyze USB Hosts, packets and USB's interaction,if any, with wireless devices including
+mobiles, wireless LANs(radiotap) etc., 
+
+In the longterm USBmd might have to be integrated into VIRGO. As VIRGO would would have the synergy of AstroInfer machine learning
+codebase for "learning" from datasets, this USBmd driver can have the added ability of analyzing large USB traffic (as a dataset)
+using some decision making algorithms and evolve as an anti-cybercrime, anti-plagiarism and anti-theft tool to single out
+"malevolent" traffic that would save individuals and organisations from the travails of tampering and loss of sensitive confidential data.
+
+The pattern mining of numeric dataset designed for AstroInfer can apply here also since USB bitstream can be analyzed using algorithms for
+numerical dataset mining. Also Discrete Fourier Transform used for analyzing data for frequencies (periodicities if any) can be used for 
+USB data , for example USB wireless traffic.
+
+======================================================
+new UMB driver bind - 27 Feb 2014 (for Bus id 7)
+======================================================
+Following example commandlines install umb.ko module, unbind the existing option driver from bus-device id and bind the umb.ko to that bus id:
+
+sudo insmod umb.ko
+echo -n "7-1:1.0" > /sys/bus/usb/drivers/option/unbind 
+echo -n "7-1:1.0" > /sys/bus/usb/drivers/umb/bind 
+
+======================================================
+Commits as on 29 July 2014
+======================================================
+Driver has been ported and built on 3.15.5 kernel. Also a driver build script has been committed.
+
+------------------------------------------------------
+USBmd version 14.9.9 has been release tagged on 9 September 2014
+------------------------------------------------------
+------------------------------------------------------
+USBmd version 15.1.8 has been release tagged on 8 January 2015 
+------------------------------------------------------
+
+http://sourceforge.net/p/usb-md/code-0/HEAD/tree/Adding%20new%20vendor%20and%20product%20IDs%20to%20an%20existing%20USB%20driver%20on%20Linux.html has steps to add new vendor-id.
+
+-------------------------------------------------------------------------------
+USB debug messages from "cat /sys/kernel/debug/usb/devices" for UMB bound above:
+-------------------------------------------------------------------------------
+
+T:  Bus=07 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 12 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=12d1 ProdID=140b Rev= 0.00
+S:  Manufacturer=HUAÿWEI TECHNOLOGIES
+S:  Product=HUAWEI Mobile
+S:  SerialNumber=ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+C:* #Ifs= 4 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=umb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=128ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+E:  Ad=84(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+E:  Ad=86(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
+E:  Ad=87(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=08(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+
+---------------------------------------------------------------------
+usbmon, libpcap tcpdump and wireshark (or vusb-analyzer) debugging
+---------------------------------------------------------------------
+*mount ­-t debugfs none_debugs /sys/kernel/debug
+*modprobe usbmon
+*ls /sys/kernel/debug/usb/usbmon/
+
+0s  0u	1s  1t	1u  2s	2t  2u	3s  3t	3u  4s	4t  4u	5s  5t	5u  6s	6t  6u	7s  7t	7u  8s	8t  8u
+
+*cat /sys/kernel/debug/usb/usbmon/8t > usbmon.mon (any of the above usbmon debug logs)
+*vusb-analyzer usbmon.mon
+
+ef728540 3811287714 S Ci:001:00 s a3 00 0000 0001 0004 4 <
+ef728540 3811287743 C Ci:001:00 0 4 = 00010000
+ef728540 3811287752 S Ci:001:00 s a3 00 0000 0002 0004 4 <
+ef728540 3811287763 C Ci:001:00 0 4 = 00010000
+f50f6540 3811287770 S Ii:001:01 -115 2 <
+f50f6540 3811287853 C Ii:001:01 -2 0
+f5390540 3814543695 S Ci:001:00 s a3 00 0000 0001 0004 4 <
+f5390540 3814543715 C Ci:001:00 0 4 = 00010000
+f5390540 3814543756 S Ci:001:00 s a3 00 0000 0002 0004 4 <
+f5390540 3814543767 C Ci:001:00 0 4 = 00010000
+f50f6540 3814543805 S Ii:001:01 -115 2 <
+
+*modprobe usbmon
+*ls /dev/usbmon[1-8]
+*tcpdump -i usbmon1 -w usbmon.pcap
+tcpdump: listening on usbmon1, link-type USB_LINUX_MMAPPED (USB with padded Linux header), capture size 65535 bytes
+^C86 packets captured
+86 packets received by filter
+
+*wireshark usbmon.pcap (loads on wireshark)
+
+----------------------------------------------------------
+Dynamic Debug - dev_dbg() and dev_vdbg()
+----------------------------------------------------------
+
+USB Debugging References:
+-------------------------
+- Texas Instruments - http://elinux.org/images/1/17/USB_Debugging_and_Profiling_Techniques.pdf
+
+---------------------------------------------------------
+NeuronRain version 15.6.15 release tagged
+---------------------------------------------------------
+
+---------------------------------------------------------
+Commits as on 11 July 2015
+---------------------------------------------------------
+usbmd kernel module has been ported to Linux Kernel 4.0.5
+
