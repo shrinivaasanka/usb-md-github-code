@@ -15,17 +15,18 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * 
-* --------------------------------------------------------------------------------------------------
-* Copyright (C):
-* Srinivasan Kannan (alias) Ka.Shrinivaasan (alias) Shrinivas Kannan
-* Independent Open Source Developer, Researcher and Consultant
-* Ph: 9789346927, 9003082186, 9791165980
-* Open Source Products Profile(Krishna iResearch): 
-* http://sourceforge.net/users/ka_shrinivaasan,
-* https://www.ohloh.net/accounts/ka_shrinivaasan 
-* Personal website(research): https://sites.google.com/site/kuja27/
-* emails: ka.shrinivaasan@gmail.com, shrinivas.kannan@gmail.com, kashrinivaasan@live.com
-* --------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+#Copyright (C):
+#Srinivasan Kannan (alias) Ka.Shrinivaasan (alias) Shrinivas Kannan
+#Ph: 9791499106, 9003082186
+#Krishna iResearch Open Source Products Profiles:
+#http://sourceforge.net/users/ka_shrinivaasan,
+#https://github.com/shrinivaasanka,
+#https://www.openhub.net/accounts/ka_shrinivaasan
+#Personal website(research): https://sites.google.com/site/kuja27/
+#emails: ka.shrinivaasan@gmail.com, shrinivas.kannan@gmail.com,
+#kashrinivaasan@live.com
+#--------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
 
 /*
@@ -60,6 +61,7 @@
 #include <linux/config.h>
 #include <linux/smp_lock.h>
 */
+#include <umb.h>
 #include <linux/mutex.h>
 #include <linux/kernel.h>
 #include <linux/errno.h>
@@ -162,21 +164,23 @@ struct usb_umb {
 static ssize_t umb_read(struct file* f, char __user *buffer, size_t count, loff_t* ppos)
 {
 	struct usb_umb *dev;
-	int retval = 0;
-	
-	printk(KERN_INFO "umb_read(): before usb_bulk_msg\n");
-	dev = (struct usb_umb*)f->private_data;
-	retval = usb_bulk_msg(dev->udev,
-						usb_rcvbulkpipe(dev->udev, dev->bulk_in_endpointAddr),
-						dev->bulk_in_buffer,
-						min(dev->bulk_in_size, count),
-						&count,
-						HZ*10
-						);
-	printk(KERN_INFO "umb_read(): before copy_to_user(): dev->bulk_in_buffer=%s\n", dev->bulk_in_buffer);
-	copy_to_user(buffer, dev->bulk_in_buffer, count);
-	return retval;
-	
+        int retval = 0;
+
+        printk(KERN_INFO "umb_read(): before usb_bulk_msg\n");
+        dev = (struct usb_umb*)f->private_data;
+        dev->bulk_in_buffer=kstrdup(virgo_kernel_analytics_conf[0].value,GFP_ATOMIC);
+        retval = usb_bulk_msg(dev->udev,
+                                                usb_rcvbulkpipe(dev->udev, dev->bulk_in_endpointAddr),
+                                                dev->bulk_in_buffer,
+                                                min(dev->bulk_in_size, count),
+                                                &count,
+                                                HZ*10
+                                                );
+        printk(KERN_INFO "umb_read(): by default returns virgo_kernel_analytics_conf[0].value, exported by kernel_analytics module\n");
+        printk(KERN_INFO "umb_read(): before copy_to_user(): user buffer=%s, dev->bulk_in_buffer=%s\n", buffer, dev->bulk_in_buffer);
+        copy_to_user(buffer, dev->bulk_in_buffer, strlen(dev->bulk_in_buffer));
+        printk(KERN_INFO "umb_read(): after copy_to_user(): user buffer=%s, dev->bulk_in_buffer=%s\n", buffer, dev->bulk_in_buffer);
+        return retval;
 }
 
 static void umb_write_bulk_callback(struct urb *urb, struct pt_regs *regs)
@@ -194,6 +198,7 @@ static ssize_t umb_write(struct file *f, const char __user *user_buffer, size_t 
 	char *buf = NULL;
 	
 	printk(KERN_INFO "umb_write(): before usb_alloc_urb\n");
+	printk(KERN_INFO "umb_write(): user_buffer = %s\n", user_buffer);
 	dev = (struct usb_umb*)f->private_data;
 	
 	if (count == 0)
@@ -205,6 +210,7 @@ static ssize_t umb_write(struct file *f, const char __user *user_buffer, size_t 
 	buf = usb_alloc_coherent(dev->udev, count, GFP_ATOMIC, &urb->transfer_dma);
 	printk(KERN_INFO "umb_write(): before copy_from_user(): buf=%s\n", buf);
 	copy_from_user(buf, user_buffer, count);
+	printk(KERN_INFO "umb_write(): after copy_from_user(): buf=%s\n", buf);
 	
 	/*fill urb and submit */
 	usb_fill_bulk_urb(urb, dev->udev, usb_sndbulkpipe(dev->udev, dev->bulk_out_endpointAddr),

@@ -27,7 +27,10 @@ __attribute__((section("__versions"))) = {
 	{ 0xf23db2b3, __VMLINUX_SYMBOL_STR(kmalloc_caches) },
 	{ 0xf281d0b9, __VMLINUX_SYMBOL_STR(usb_deregister_dev) },
 	{ 0x4f8b5ddb, __VMLINUX_SYMBOL_STR(_copy_to_user) },
+	{ 0xd0d8621b, __VMLINUX_SYMBOL_STR(strlen) },
 	{ 0x38d9bd9b, __VMLINUX_SYMBOL_STR(usb_bulk_msg) },
+	{ 0xc499ae1e, __VMLINUX_SYMBOL_STR(kstrdup) },
+	{ 0x69e59c53, __VMLINUX_SYMBOL_STR(virgo_kernel_analytics_conf) },
 	{ 0xfaf77004, __VMLINUX_SYMBOL_STR(usb_free_urb) },
 	{ 0x87b5252b, __VMLINUX_SYMBOL_STR(usb_submit_urb) },
 	{ 0x4f6b400b, __VMLINUX_SYMBOL_STR(_copy_from_user) },
@@ -44,7 +47,7 @@ __attribute__((section("__versions"))) = {
 static const char __module_depends[]
 __used
 __attribute__((section(".modinfo"))) =
-"depends=";
+"depends=virgo_kernel_analytics";
 
 
-MODULE_INFO(srcversion, "E427A82A49BBF3FE341F473");
+MODULE_INFO(srcversion, "3910CA144555F8A71AE2CDD");
