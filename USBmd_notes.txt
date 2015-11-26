@@ -147,3 +147,18 @@ Commits as on 11 July 2015
 ---------------------------------------------------------
 usbmd kernel module has been ported to Linux Kernel 4.0.5
 
+---------------------------------------------------------
+Commits as on 26 November 2015
+---------------------------------------------------------
+- Updated USB-md driver with a lookup of VIRGO kernel_analytics config variable exported by kernel_analytics module in umb_read() as default.
+- New header file umb.h has been added that externs the VIRGO kernel_analytics config array variables
+- Module.symvers has been imported from VIRGO kernel_analytics and clean target has been commented in build script after initial build as make clean removes Module.symvers.
+- kern.log with umb_read() and umb_write() have been added with following commandlines:
+      - cat /dev/umb0 - invokes umb_read() but there are kernel panics sometimes
+      - cat <file> > /dev/umb0 - invokes umb_write()
+  where umb0 is usb-md device name registered with /sys/bus/usb as below:
+      - insmod umb.ko
+      - echo -n "7-1:1.0" > /sys/bus/usb/drivers/option/unbind
+      - echo -n "7-1:1.0" > /sys/bus/usb/drivers/umb/bind
+- Updated build generated sources and object files have been added
+
