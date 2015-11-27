@@ -162,3 +162,21 @@ Commits as on 26 November 2015
       - echo -n "7-1:1.0" > /sys/bus/usb/drivers/umb/bind
 - Updated build generated sources and object files have been added
 
+----------------------------------------------------------
+Commits as on 27 November 2015
+----------------------------------------------------------
+New folder usb_wwan_modified has been added that contains the USB serial, option and wireless USB modem WWAN drivers from kernel mainline
+instrumented with lot of printk()s so that log messages are written to kern.log. Though dev_dbg dynamic debugging can be used by writing to /sys/kernel/debug/<...>/dynamic_debug
+printk()s are sufficient for now. This traces through the USB connect and data transfer code:
+        - probe
+        - buffer is copied from userspace to kernelspace
+        - URB is allocated in kernel
+        - buffer is memcopied to URB
+        - usb send/receive bulk pipe calls
+        - usb_fill_bulk_urb
+Almost all buffers like in and out buffers in URBs, portdata, interfacedata, serial_data, serial_port_data are printed to kern.log. This log is
+analyzable by AsFer machine learning code for USB debugging similar to usbmon logs.
+
+These are initial commits only and usb-serial.c, usb_wwan.c, option.c and serial.h might be significantly altered going forward.
+
+
