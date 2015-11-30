@@ -179,4 +179,10 @@ analyzable by AsFer machine learning code for USB debugging similar to usbmon lo
 
 These are initial commits only and usb-serial.c, usb_wwan.c, option.c and serial.h might be significantly altered going forward.
 
+----------------------------------------------------------
+Commits as on 30 November 2015
+----------------------------------------------------------
+Added usb.h from kernel mainline, instrumented with printk() to print transfer_buffer in usb_fill_[control/bulk/interrupt]_urb() functions. kern.log for this has been added in usb_wwan_modified/testlogs.
+
+
 
