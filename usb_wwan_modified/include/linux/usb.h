@@ -55,6 +55,14 @@ struct usb_device;
 struct usb_driver;
 struct wusb_dev;
 
+static inline void print_buffer(char *s, int length)
+{
+        int i=0;
+        printk(KERN_INFO "print_buffer(): ");
+        for(i=0; i < length; i++)
+                printk(KERN_INFO "%x ",s[i]);
+}
+
 /*-------------------------------------------------------------------------*/
 
 /*
@@ -1544,6 +1552,7 @@ static inline void usb_fill_control_urb(struct urb *urb,
 	urb->complete = complete_fn;
 	urb->context = context;
 	printk(KERN_INFO "usb_fill_control_urb(): urb->transfer_buffer = %s \n", urb->transfer_buffer);
+	print_buffer(urb->transfer_buffer, urb->actual_length);
 }
 
 /**
@@ -1574,6 +1583,7 @@ static inline void usb_fill_bulk_urb(struct urb *urb,
 	urb->complete = complete_fn;
 	urb->context = context;
 	printk(KERN_INFO "usb_fill_bulk_urb(): urb->transfer_buffer = %s \n", urb->transfer_buffer);
+	print_buffer(urb->transfer_buffer, urb->actual_length);
 }
 
 /**

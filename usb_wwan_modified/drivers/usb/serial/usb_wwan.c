@@ -65,6 +65,8 @@
 #include <linux/serial.h>
 #include "usb-wwan.h"
 
+extern void print_buffer(char *s, int length);
+
 void usb_wwan_dtr_rts(struct usb_serial_port *port, int on)
 {
 	struct usb_wwan_port_private *portdata;
@@ -252,6 +254,7 @@ int usb_wwan_write(struct tty_struct *tty, struct usb_serial_port *port,
 		this_urb->transfer_buffer_length = todo;
 
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_write(): buf = %s, portdata in buffer = %s, portdata out buffer = %s\n, this_urb->transfer_buffer=%s\n", buf, portdata->in_buffer, portdata->out_buffer, this_urb->transfer_buffer);
+		print_buffer(this_urb->transfer_buffer,this_urb->actual_length);
 		spin_lock_irqsave(&intfdata->susp_lock, flags);
 		if (intfdata->suspended) {
 			usb_anchor_urb(this_urb, &portdata->delayed);
@@ -299,6 +302,7 @@ static void usb_wwan_indat_callback(struct urb *urb)
 	dev = &port->dev;
 
 	printk(KERN_INFO "usb_wwan.c: usb_wwan_indat_callback(): urb->transfer_buffer = %s\n", data);
+	print_buffer(urb->transfer_buffer,urb->actual_length);
 	if (status) {
 		dev_dbg(dev, "%s: nonzero status: %d on endpoint %02x.\n",
 			__func__, status, endpoint);
@@ -344,6 +348,7 @@ static void usb_wwan_outdat_callback(struct urb *urb)
 	for (i = 0; i < N_OUT_URB; ++i) {
 		if (portdata->out_urbs[i] == urb) {
 			printk(KERN_INFO "usb_wwan.c: usb_wwan_outdat_callback(): portdata->out_buffer = %s, transfer_buffer=%s", portdata->out_buffer, portdata->out_urbs[i]->transfer_buffer);
+			print_buffer(portdata->out_urbs[i]->transfer_buffer,portdata->out_urbs[i]->actual_length);
 			smp_mb__before_atomic();
 			clear_bit(i, &portdata->out_busy);
 			break;
@@ -364,6 +369,7 @@ int usb_wwan_write_room(struct tty_struct *tty)
 	for (i = 0; i < N_OUT_URB; i++) {
 		this_urb = portdata->out_urbs[i];
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_write_room(): portdata->in_buffer = %s, portdata->out_buffer = %s, this_urb->transfer_buffer = %s\n", portdata->in_buffer, portdata->out_buffer, this_urb->transfer_buffer);
+		print_buffer(this_urb->transfer_buffer,this_urb->actual_length);
 		if (this_urb && !test_bit(i, &portdata->out_busy))
 			data_len += OUT_BUFLEN;
 	}
@@ -386,6 +392,7 @@ int usb_wwan_chars_in_buffer(struct tty_struct *tty)
 	for (i = 0; i < N_OUT_URB; i++) {
 		this_urb = portdata->out_urbs[i];
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_chars_in_buffer(): portdata->in_buffer = %s, portdata->out_buffer = %s, this_urb->transfer_buffer\n", portdata->in_buffer, portdata->out_buffer, this_urb->transfer_buffer);
+		print_buffer(this_urb->transfer_buffer, this_urb->actual_length);
 		if (this_urb && !test_bit(i, &portdata->out_busy))
 		/* FIXME: This locking is insufficient as this_urb may
 		   go unused during the test */
@@ -423,6 +430,7 @@ int usb_wwan_open(struct tty_struct *tty, struct usb_serial_port *port)
 			continue;
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_open(): portdata->in_urbs[%d] \n",i);
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_open(): portdata->in_buffer = %s, portdata->out_buffer = %s, urb->transfer_buffer=%s\n", portdata->in_buffer, portdata->out_buffer, urb->transfer_buffer);
+		print_buffer(urb->transfer_buffer,urb->actual_length);
 		err = usb_submit_urb(urb, GFP_KERNEL);
 		if (err) {
 			dev_err(&port->dev,
@@ -450,6 +458,7 @@ static void unbusy_queued_urb(struct urb *urb,
 	for (i = 0; i < N_OUT_URB; i++) {
 		if (urb == portdata->out_urbs[i]) {
 			printk(KERN_INFO "usb_wwan.c: unbusy_queued_urb(): portdata->in_buffer = %s, portdata->out_buffer = %s, urb->transfer_buffer=%s\n", portdata->in_buffer, portdata->out_buffer, urb->transfer_buffer);
+			print_buffer(urb->transfer_buffer,urb->actual_length);
 			clear_bit(i, &portdata->out_busy);
 			break;
 		}
@@ -541,6 +550,7 @@ int usb_wwan_port_probe(struct usb_serial_port *port)
 						usb_wwan_indat_callback);
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_port_probe(): in buffer=%s\n",buffer);
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_port_probe() 1: portdata->in_buffer = %s, portdata->out_buffer = %s, urb->transfer_buffer=%s\n", portdata->in_buffer, portdata->out_buffer, urb->transfer_buffer);
+		print_buffer(urb->transfer_buffer,urb->actual_length);
 		portdata->in_urbs[i] = urb;
 	}
 
@@ -556,6 +566,7 @@ int usb_wwan_port_probe(struct usb_serial_port *port)
 						usb_wwan_outdat_callback);
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_port_probe(): out buffer=%s\n",buffer);
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_port_probe() 2: portdata->in_buffer = %s, portdata->out_buffer = %s, urb->transfer_buffer=%s\n", portdata->in_buffer, portdata->out_buffer, urb->transfer_buffer);
+		print_buffer(urb->transfer_buffer,urb->actual_length);
 		portdata->out_urbs[i] = urb;
 	}
 
@@ -657,6 +668,7 @@ static int usb_wwan_submit_delayed_urbs(struct usb_serial_port *port)
 	for (;;) {
 		urb = usb_get_from_anchor(&portdata->delayed);
 		printk(KERN_INFO "usb_wwan.c: usb_wwan_submit_delayed_urbs(): portdata->in_buffer = %s, portdata->out_buffer = %s, urb->transfer_buffer=%s\n", portdata->in_buffer, portdata->out_buffer, urb->transfer_buffer);
+		print_buffer(urb->transfer_buffer,urb->actual_length);
 		if (!urb)
 			break;
 
@@ -716,6 +728,7 @@ int usb_wwan_resume(struct usb_serial *serial)
 		for (j = 0; j < N_IN_URB; j++) {
 			urb = portdata->in_urbs[j];
 			printk(KERN_INFO "usb_wwan.c: usb_wwan_resume(): urb->transfer_buffer = %s\n", portdata->in_buffer, portdata->out_buffer, urb->transfer_buffer);
+			print_buffer(urb->transfer_buffer,urb->actual_length);
 
 			err = usb_submit_urb(urb, GFP_ATOMIC);
 			if (err < 0) {

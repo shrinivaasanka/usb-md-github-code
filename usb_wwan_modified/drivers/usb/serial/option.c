@@ -536,6 +536,9 @@ static void option_instat_callback(struct urb *urb);
 #define VIATELECOM_VENDOR_ID			0x15eb
 #define VIATELECOM_PRODUCT_CDS7			0x0001
 
+extern void print_buffer(char *s, int length);
+
+
 struct option_blacklist_info {
 	/* bitmask of interface numbers blacklisted for send_setup */
 	const unsigned long sendsetup;
@@ -1936,6 +1939,7 @@ static void option_instat_callback(struct urb *urb)
 
 	dev_dbg(dev, "%s: urb %p port %p has data %p\n", __func__, urb, port, portdata);
 	printk(KERN_INFO "%s: urb %p port %p has in data %s, out data %s\n", __func__, urb, port, portdata->in_buffer, portdata->out_buffer);
+	print_buffer(urb->transfer_buffer, urb->actual_length);
 
 	if (status == 0) {
 		struct usb_ctrlrequest *req_pkt =

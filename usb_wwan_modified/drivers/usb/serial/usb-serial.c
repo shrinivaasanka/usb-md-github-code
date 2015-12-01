@@ -86,6 +86,9 @@ static DEFINE_IDR(serial_minors);
 static DEFINE_MUTEX(table_lock);
 static LIST_HEAD(usb_serial_driver_list);
 
+extern void print_buffer(char *s, int length);
+
+
 /*
  * Look up the serial port structure.  If it is found and it hasn't been
  * disconnected, return with the parent usb_serial structure's disc_mutex held
@@ -363,6 +366,7 @@ static int serial_write(struct tty_struct *tty, const unsigned char *buf,
 
 	dev_dbg(tty->dev, "%s - %d byte(s)\n", __func__, count);
 	printk(KERN_INFO "usb-serial.c: serial_write(): buf = %s\n",buf);
+	print_buffer(buf,strlen(buf));
 	retval = port->serial->type->write(tty, port, buf, count);
 	if (retval < 0)
 		retval = usb_translate_errors(retval);
