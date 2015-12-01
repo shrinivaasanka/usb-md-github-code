@@ -184,5 +184,12 @@ Commits as on 30 November 2015
 ----------------------------------------------------------
 Added usb.h from kernel mainline, instrumented with printk() to print transfer_buffer in usb_fill_[control/bulk/interrupt]_urb() functions. kern.log for this has been added in usb_wwan_modified/testlogs.
 
+----------------------------------------------------------
+Commits as on 1 December 2015
+----------------------------------------------------------
+- new kernel function print_buffer() has been added in usb.h that prints contents of char buffer in hex 
+- Above print_buffer() is invoked to print transfer_buffer in usb_wwan.c, usb-serial.c, option.c 
+- kern.log with print_buffer() output has been added - This dumps similar to wireshark, usbmon and other usb analyzers.
+
 
 
