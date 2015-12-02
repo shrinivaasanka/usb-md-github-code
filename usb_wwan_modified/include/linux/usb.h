@@ -58,9 +58,10 @@ struct wusb_dev;
 static inline void print_buffer(char *s, int length)
 {
         int i=0;
-        printk(KERN_INFO "print_buffer(): ");
+        printk(KERN_INFO "begin print_buffer(): ");
         for(i=0; i < length; i++)
-                printk(KERN_INFO "%x ",s[i]);
+                printk(KERN_INFO "print_buffer() byte: %x\n",s[i]);
+        printk(KERN_INFO "end print_buffer(): ");
 }
 
 /*-------------------------------------------------------------------------*/
