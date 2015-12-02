@@ -191,5 +191,10 @@ Commits as on 1 December 2015
 - Above print_buffer() is invoked to print transfer_buffer in usb_wwan.c, usb-serial.c, option.c 
 - kern.log with print_buffer() output has been added - This dumps similar to wireshark, usbmon and other usb analyzers.
 
-
-
+----------------------------------------------------------
+Commits as on 2 December 2015
+----------------------------------------------------------
+- changed print_buffer() printk() to print a delimiter in each byte for AsFer Machine Learning code processing
+- add a parser script for kern.log to print print_buffer() lines
+- parsed kern.log with print_buffer() lines has been added
+- Added an Apache Spark MapReduce python script to compute byte frequency in parsed print_buffer() kern.log
