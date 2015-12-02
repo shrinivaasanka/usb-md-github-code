@@ -198,3 +198,16 @@ Commits as on 2 December 2015
 - add a parser script for kern.log to print print_buffer() lines
 - parsed kern.log with print_buffer() lines has been added
 - Added an Apache Spark MapReduce python script to compute byte frequency in parsed print_buffer() kern.log
+
+------------------------------------------------------------------
+(ONGOING) NeuronRain USBmd Debug and Malafide Traffic Analytics
+------------------------------------------------------------------
+As mentioned in commit notes above, USB incoming and outgoing data transfer_buffer are dumped byte-by-byte. Given this data various
+analytics can be performed most of which are already implemented in AsFer codebase:
+- frequency of bytes
+- most frequent sequence of bytes
+- bayesian and decision tree inference
+- deep learning
+- perceptrons
+- streaming algorithms for USB data stream
+and so on.
