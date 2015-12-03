@@ -211,3 +211,11 @@ analytics can be performed most of which are already implemented in AsFer codeba
 - perceptrons
 - streaming algorithms for USB data stream
 and so on.
+
+------------------------------------------------------------------
+Commits as on 3 December 2015
+------------------------------------------------------------------
+- Apache Spark script for analyzing the USBWWAN byte stream logs has been updated with byte counts map-reduce functions from print_buffer() logs
+and temp DataFrame Table creation with SparkSQL.
+- logs for the script have been added in usb_wwan_modified/python-src/testlogs/Spark_USBWWANLogMapReduceParser.out.3December2015
+- kern.log parser shellscript has been updated
