@@ -28,5 +28,5 @@
 #********************************************************************************************************/
 
 #!/bin/bash
-tail -f /var/log/kern.log | awk -F"]" '{print $2}'|grep "print_buffer() byte" 2>&1 > kern.log.print_buffer_byte
+tail -f /var/log/kern.log | awk -F"]" '{print $2}'|grep "print_buffer() byte"|awk -F":" '{print $2}' 2>&1 > kern.log.print_buffer_byte
 
