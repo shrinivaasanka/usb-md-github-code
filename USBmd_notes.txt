@@ -219,3 +219,13 @@ Commits as on 3 December 2015
 and temp DataFrame Table creation with SparkSQL.
 - logs for the script have been added in usb_wwan_modified/python-src/testlogs/Spark_USBWWANLogMapReduceParser.out.3December2015
 - kern.log parser shellscript has been updated
+
+-------------------------------------------------------------------
+AsFer commits for USBmd as on 4 December 2015
+-------------------------------------------------------------------
+All the Streaming_<>.py Streaming Algorithm implementations in AsFer/python-src/ have been updated with:
+- hashlib ripemd160 hash MD algorithm for hash functions and return hexdigest()
+- USBWWAN byte stream data from USBmd print_buffer() logs in usb-md/usb_wwan_modified/testlogs/ has been added as a Data Storage and Data Source
+- logs for the above have been added to asfer/python-src/testlogs/
+- Streaming Abstract Generator has been updated with USB stream data iterable and parametrized for data source and storage
+- Some corrections to the asfer/python-src/Streaming_<> scripts
