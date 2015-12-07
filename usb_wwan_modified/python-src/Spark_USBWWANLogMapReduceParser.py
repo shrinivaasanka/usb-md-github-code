@@ -35,6 +35,7 @@
 
 from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext, Row 
+import operator
 
 def mapFunction(printbufferline):
      #for i in printbufferline.split(":"):
@@ -49,10 +50,18 @@ input=open('../testlogs/kern.log.print_buffer_byte','r')
 paralleldata=spcon.parallelize(input.readlines())
 printbuflines=paralleldata.filter(lambda printbufline: printbufline)
 k=printbuflines.map(mapFunction).reduceByKey(reduceFunction)
-print k.collect()
+dict_k=dict(k.collect())
+s = sorted(dict_k.items(),key=operator.itemgetter(1), reverse=True)
+print "Spark MapReduce results:"
+print s
+
 ############################
 sqlContext=SQLContext(spcon)
 bytes_stream_schema=sqlContext.createDataFrame(k.collect())
 bytes_stream_schema.registerTempTable("USBWWAN_bytes_stream")
 query_results=sqlContext.sql("SELECT * FROM USBWWAN_bytes_stream")
-print query_results.collect()
+dict_query_results=dict(query_results.collect())
+print "SparkSQL DataFrame query results:"
+print dict_query_results
+print "Cardinality of Stream Dataset:"
+print len(dict_query_results)
