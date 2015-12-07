@@ -229,3 +229,13 @@ All the Streaming_<>.py Streaming Algorithm implementations in AsFer/python-src/
 - logs for the above have been added to asfer/python-src/testlogs/
 - Streaming Abstract Generator has been updated with USB stream data iterable and parametrized for data source and storage
 - Some corrections to the asfer/python-src/Streaming_<> scripts
+
+-------------------------------------------------------------------
+Commits as on 7 December 2015
+-------------------------------------------------------------------
+- added Spark Mapreduce and DataFrame log for USBWWAN byte stream
+- added a parsed kern.log with only bytes from USBWWAN stream
+- Added dict() and sort() for query results and printed cardinality of the stream data set which is the size of the dict.
+An example log has been added which prints the cardinality as ~250. In contrast, LogLog and HyperLogLog counter estimations
+approximate the cardinality to 140 and 110 respectively
+
