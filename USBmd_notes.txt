@@ -250,3 +250,9 @@ Streaming Abstract Generator iterable framework.
 - log with a simple NoSQL table with StreamingData.txt and USBWWAN data has been added to testlogs/.
 - MongoDB configuration has a database(asfer-database) and a collection(asfer-collection).
 - MongoDB_DBBackend @provides pymongo.collection.Collection which is @inject-ed to Abstract_DBBackend
+
+----------------------------------------------------------------------------------------
+Commits as on 10 January 2016
+----------------------------------------------------------------------------------------
+NeuronRain USBmd enterprise version 2016.1.10 released.
+
