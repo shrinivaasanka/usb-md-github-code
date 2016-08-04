@@ -256,3 +256,16 @@ Commits as on 10 January 2016
 ----------------------------------------------------------------------------------------
 NeuronRain USBmd enterprise version 2016.1.10 released.
 
+----------------------------------------------------------------------------------------
+Commits - 4 August 2016
+----------------------------------------------------------------------------------------
+1.New build script for drivers/usb top level folder has been added.
+2.Copyleft notices updated
+3.print_buffer() in usb.h has been #ifdef-ed based on a build time flag to suppress the buffer bytes dump preferentially so that
+kern.log is not flooded.
+4.Flag PRINT_BUFFER has to be defined with #define somewhere within KBuild makefiles or externally.
+5..ko files rebuilt
+6. Miscellaneous code changes to suppress kbuild warnings - cast etc.,
+7. PRINT_BUFFER block changed to print the bytes in single line for each buffer
+
+
