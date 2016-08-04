@@ -31,10 +31,10 @@ static inline void print_buffer(char *s, int length)
 #ifdef PRINT_BUFFER
 	{
         	int i=0;
-        	printk(KERN_INFO "begin print_buffer(): ");
+        	printk(KERN_INFO "begin print_buffer(): \n");
         	for(i=0; i < length; i++)
-               		 printk(KERN_INFO "print_buffer() byte: %x\n",s[i]);
-        	printk(KERN_INFO "end print_buffer(): ");
+               		 printk(KERN_INFO "%x ",s[i]);
+        	printk(KERN_INFO "\n end print_buffer(): \n");
 	}
 #endif
 }
@@ -1527,7 +1527,7 @@ static inline void usb_fill_control_urb(struct urb *urb,
 	urb->transfer_buffer_length = buffer_length;
 	urb->complete = complete_fn;
 	urb->context = context;
-	printk(KERN_INFO "usb_fill_control_urb(): urb->transfer_buffer = %s \n", urb->transfer_buffer);
+	printk(KERN_INFO "usb_fill_control_urb(): urb->transfer_buffer = %s \n", (char*) urb->transfer_buffer);
 	print_buffer(urb->transfer_buffer, urb->actual_length);
 }
 
@@ -1558,7 +1558,7 @@ static inline void usb_fill_bulk_urb(struct urb *urb,
 	urb->transfer_buffer_length = buffer_length;
 	urb->complete = complete_fn;
 	urb->context = context;
-	printk(KERN_INFO "usb_fill_bulk_urb(): urb->transfer_buffer = %s \n", urb->transfer_buffer);
+	printk(KERN_INFO "usb_fill_bulk_urb(): urb->transfer_buffer = %s \n", (char*) urb->transfer_buffer);
 	print_buffer(urb->transfer_buffer, urb->actual_length);
 }
 
@@ -1613,7 +1613,7 @@ static inline void usb_fill_int_urb(struct urb *urb,
 	}
 
 	urb->start_frame = -1;
-	printk(KERN_INFO "usb_fill_int_urb(): urb->transfer_buffer = %s \n", urb->transfer_buffer);
+	printk(KERN_INFO "usb_fill_int_urb(): urb->transfer_buffer = %s \n", (char*) urb->transfer_buffer);
 }
 
 extern void usb_init_urb(struct urb *urb);
