@@ -268,4 +268,144 @@ kern.log is not flooded.
 6. Miscellaneous code changes to suppress kbuild warnings - cast etc.,
 7. PRINT_BUFFER block changed to print the bytes in single line for each buffer
 
+-----------------------------------------------------------------------------------------------------------------
+Commits - 13 July 2017 - usb-storage driver last sector access slab out of bounds error in 64-bit - committed for analysis
+- this error was frequently witnessed in VIRGO 32-bit stability issues and panics - ISRA looks like a GCC 
+optimization of a function invocation (Interprocedural Scalar Replacement of Aggregates) 
+-----------------------------------------------------------------------------------------------------------------
+Jul 13 15:03:36 localhost kernel: [ 9837.497280] ==================================================================
+Jul 13 15:03:36 localhost kernel: [ 9837.499787] ==================================================================
+Jul 13 15:03:36 localhost kernel: [ 9837.499822] BUG: KASAN: slab-out-of-bounds in last_sector_hacks.isra.1.part.2+0xc9/0x1d0 [usb_storage] at addr ffff88007cdaa758
+Jul 13 15:03:36 localhost kernel: [ 9837.499831] Read of size 8 by task usb-storage/6243
+Jul 13 15:03:36 localhost kernel: [ 9837.499844] CPU: 0 PID: 6243 Comm: usb-storage Tainted: G    B           4.10.3 #18
+Jul 13 15:03:36 localhost kernel: [ 9837.499849] Hardware name: Dell Inc. Inspiron 1545                   /0J037P, BIOS A14 12/07/2009
+Jul 13 15:03:36 localhost kernel: [ 9837.499851] Call Trace:
+Jul 13 15:03:36 localhost kernel: [ 9837.499863]  dump_stack+0x63/0x8b
+Jul 13 15:03:36 localhost kernel: [ 9837.499870]  kasan_object_err+0x21/0x70
+Jul 13 15:03:36 localhost kernel: [ 9837.499877]  kasan_report.part.1+0x219/0x4f0
+Jul 13 15:03:36 localhost kernel: [ 9837.499893]  ? last_sector_hacks.isra.1.part.2+0xc9/0x1d0 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.499899]  kasan_report+0x25/0x30
+Jul 13 15:03:36 localhost kernel: [ 9837.499906]  __asan_load8+0x5e/0x70
+Jul 13 15:03:36 localhost kernel: [ 9837.499922]  last_sector_hacks.isra.1.part.2+0xc9/0x1d0 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.499938]  usb_stor_invoke_transport+0x1a1/0x960 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.499946]  ? migrate_swap_stop+0x2e0/0x2e0
+Jul 13 15:03:36 localhost kernel: [ 9837.499963]  ? usb_stor_port_reset+0xb0/0xb0 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.499973]  ? wait_for_completion_interruptible+0x1a7/0x260
+Jul 13 15:03:36 localhost kernel: [ 9837.499981]  ? wait_for_completion_killable+0x2a0/0x2a0
+Jul 13 15:03:36 localhost kernel: [ 9837.499989]  ? raise_softirq_irqoff+0xba/0xd0
+Jul 13 15:03:36 localhost kernel: [ 9837.499995]  ? wake_up_q+0x80/0x80
+Jul 13 15:03:36 localhost kernel: [ 9837.500011]  usb_stor_transparent_scsi_command+0xe/0x10 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  usb_stor_control_thread+0x344/0x510 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ? usb_stor_disconnect+0x120/0x120 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ? default_wake_function+0x2f/0x40
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ? __wake_up_common+0x78/0xc0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  kthread+0x178/0x1d0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ? usb_stor_disconnect+0x120/0x120 [usb_storage]
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ? kthread_create_on_node+0xd0/0xd0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ret_from_fork+0x2c/0x40
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] Object at ffff88007cdaa668, in cache kmalloc-192 size: 192
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] Allocated:
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] PID = 6277
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  save_stack_trace+0x1b/0x20
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  save_stack+0x46/0xd0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  kasan_kmalloc+0xad/0xe0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  kmem_cache_alloc_trace+0xef/0x210
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  kernfs_fop_open+0x14b/0x540
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  do_dentry_open+0x39a/0x560
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  vfs_open+0x84/0xd0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  path_openat+0x4ab/0x1e10
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  do_filp_open+0x122/0x1c0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  do_sys_open+0x17c/0x2c0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  compat_SyS_open+0x1b/0x20
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  do_fast_syscall_32+0x188/0x300
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  entry_SYSENTER_compat+0x4c/0x5b
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] Freed:
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] PID = 6277
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  save_stack_trace+0x1b/0x20
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  save_stack+0x46/0xd0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  kasan_slab_free+0x71/0xb0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  kfree+0x9e/0x1e0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  kernfs_fop_release+0x87/0xa0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  __fput+0x177/0x350
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ____fput+0xe/0x10
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  task_work_run+0xa0/0xc0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  exit_to_usermode_loop+0xc5/0xd0
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  do_fast_syscall_32+0x2ef/0x300
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  entry_SYSENTER_compat+0x4c/0x5b
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] Memory state around the buggy address:
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ffff88007cdaa600: fc fc fc fc fc fc fc fc fc fc fc fc fc fb fb fb
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ffff88007cdaa680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] >ffff88007cdaa700: fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]                                                     ^
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ffff88007cdaa780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+Jul 13 15:03:36 localhost kernel: [ 9837.500017]  ffff88007cdaa800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+Jul 13 15:03:36 localhost kernel: [ 9837.500017] ==================================================================
+Jul 13 15:03:37 localhost kernel: [ 9837.668157] ==================================================================
+Jul 13 15:03:37 localhost kernel: [ 9837.668191] BUG: KASAN: slab-out-of-bounds in last_sector_hacks.isra.1.part.2+0xc9/0x1d0 [usb_storage] at addr ffff88007cdaa758
+Jul 13 15:03:37 localhost kernel: [ 9837.668200] Read of size 8 by task usb-storage/6243
+Jul 13 15:03:37 localhost kernel: [ 9837.668213] CPU: 1 PID: 6243 Comm: usb-storage Tainted: G    B           4.10.3 #18
+Jul 13 15:03:37 localhost kernel: [ 9837.668218] Hardware name: Dell Inc. Inspiron 1545                   /0J037P, BIOS A14 12/07/2009
+Jul 13 15:03:37 localhost kernel: [ 9837.668220] Call Trace:
+Jul 13 15:03:37 localhost kernel: [ 9837.668233]  dump_stack+0x63/0x8b
+Jul 13 15:03:37 localhost kernel: [ 9837.668240]  kasan_object_err+0x21/0x70
+Jul 13 15:03:37 localhost kernel: [ 9837.668247]  kasan_report.part.1+0x219/0x4f0
+Jul 13 15:03:37 localhost kernel: [ 9837.668263]  ? last_sector_hacks.isra.1.part.2+0xc9/0x1d0 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668269]  kasan_report+0x25/0x30
+Jul 13 15:03:37 localhost kernel: [ 9837.668277]  __asan_load8+0x5e/0x70
+Jul 13 15:03:37 localhost kernel: [ 9837.668292]  last_sector_hacks.isra.1.part.2+0xc9/0x1d0 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668308]  usb_stor_invoke_transport+0x1a1/0x960 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668316]  ? migrate_swap_stop+0x2e0/0x2e0
+Jul 13 15:03:37 localhost kernel: [ 9837.668332]  ? usb_stor_port_reset+0xb0/0xb0 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668343]  ? wait_for_completion_interruptible+0x1a7/0x260
+Jul 13 15:03:37 localhost kernel: [ 9837.668351]  ? wait_for_completion_killable+0x2a0/0x2a0
+Jul 13 15:03:37 localhost kernel: [ 9837.668360]  ? raise_softirq_irqoff+0xba/0xd0
+Jul 13 15:03:37 localhost kernel: [ 9837.668366]  ? wake_up_q+0x80/0x80
+Jul 13 15:03:37 localhost kernel: [ 9837.668382]  usb_stor_transparent_scsi_command+0xe/0x10 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668398]  usb_stor_control_thread+0x344/0x510 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668415]  ? usb_stor_disconnect+0x120/0x120 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668422]  ? default_wake_function+0x2f/0x40
+Jul 13 15:03:37 localhost kernel: [ 9837.668430]  ? __wake_up_common+0x78/0xc0
+Jul 13 15:03:37 localhost kernel: [ 9837.668436]  kthread+0x178/0x1d0
+Jul 13 15:03:37 localhost kernel: [ 9837.668454]  ? usb_stor_disconnect+0x120/0x120 [usb_storage]
+Jul 13 15:03:37 localhost kernel: [ 9837.668460]  ? kthread_create_on_node+0xd0/0xd0
+Jul 13 15:03:37 localhost kernel: [ 9837.668466]  ret_from_fork+0x2c/0x40
+Jul 13 15:03:37 localhost kernel: [ 9837.668472] Object at ffff88007cdaa668, in cache kmalloc-192 size: 192
+Jul 13 15:03:37 localhost kernel: [ 9837.668478] Allocated:
+Jul 13 15:03:37 localhost kernel: [ 9837.668483] PID = 6277
+Jul 13 15:03:37 localhost kernel: [ 9837.668494]  save_stack_trace+0x1b/0x20
+Jul 13 15:03:37 localhost kernel: [ 9837.668500]  save_stack+0x46/0xd0
+Jul 13 15:03:37 localhost kernel: [ 9837.668506]  kasan_kmalloc+0xad/0xe0
+Jul 13 15:03:37 localhost kernel: [ 9837.668513]  kmem_cache_alloc_trace+0xef/0x210
+Jul 13 15:03:37 localhost kernel: [ 9837.668520]  kernfs_fop_open+0x14b/0x540
+Jul 13 15:03:37 localhost kernel: [ 9837.668527]  do_dentry_open+0x39a/0x560
+Jul 13 15:03:37 localhost kernel: [ 9837.668532]  vfs_open+0x84/0xd0
+Jul 13 15:03:37 localhost kernel: [ 9837.668538]  path_openat+0x4ab/0x1e10
+Jul 13 15:03:37 localhost kernel: [ 9837.668544]  do_filp_open+0x122/0x1c0
+Jul 13 15:03:37 localhost kernel: [ 9837.668549]  do_sys_open+0x17c/0x2c0
+Jul 13 15:03:37 localhost kernel: [ 9837.668554]  compat_SyS_open+0x1b/0x20
+Jul 13 15:03:37 localhost kernel: [ 9837.668561]  do_fast_syscall_32+0x188/0x300
+Jul 13 15:03:37 localhost kernel: [ 9837.668568]  entry_SYSENTER_compat+0x4c/0x5b
+Jul 13 15:03:37 localhost kernel: [ 9837.668570] Freed:
+Jul 13 15:03:37 localhost kernel: [ 9837.668575] PID = 6277
+Jul 13 15:03:37 localhost kernel: [ 9837.668583]  save_stack_trace+0x1b/0x20
+Jul 13 15:03:37 localhost kernel: [ 9837.668589]  save_stack+0x46/0xd0
+Jul 13 15:03:37 localhost kernel: [ 9837.668594]  kasan_slab_free+0x71/0xb0
+Jul 13 15:03:37 localhost kernel: [ 9837.668599]  kfree+0x9e/0x1e0
+Jul 13 15:03:37 localhost kernel: [ 9837.668605]  kernfs_fop_release+0x87/0xa0
+Jul 13 15:03:37 localhost kernel: [ 9837.668611]  __fput+0x177/0x350
+Jul 13 15:03:37 localhost kernel: [ 9837.668616]  ____fput+0xe/0x10
+Jul 13 15:03:37 localhost kernel: [ 9837.668623]  task_work_run+0xa0/0xc0
+Jul 13 15:03:37 localhost kernel: [ 9837.668629]  exit_to_usermode_loop+0xc5/0xd0
+Jul 13 15:03:37 localhost kernel: [ 9837.668635]  do_fast_syscall_32+0x2ef/0x300
+Jul 13 15:03:37 localhost kernel: [ 9837.668642]  entry_SYSENTER_compat+0x4c/0x5b
+Jul 13 15:03:37 localhost kernel: [ 9837.668644] Memory state around the buggy address:
+Jul 13 15:03:37 localhost kernel: [ 9837.668655]  ffff88007cdaa600: fc fc fc fc fc fc fc fc fc fc fc fc fc fb fb fb
+Jul 13 15:03:37 localhost kernel: [ 9837.668664]  ffff88007cdaa680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+Jul 13 15:03:37 localhost kernel: [ 9837.668674] >ffff88007cdaa700: fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc
+Jul 13 15:03:37 localhost kernel: [ 9837.668680]                                                     ^
+Jul 13 15:03:37 localhost kernel: [ 9837.668689]  ffff88007cdaa780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+Jul 13 15:03:37 localhost kernel: [ 9837.668698]  ffff88007cdaa800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+Jul 13 15:03:37 localhost kernel: [ 9837.668704] ==================================================================
+Jul 13 15:03:37 localhost NetworkManager[745]: <info>  [1499938417.1889]   address 192.168.1.100
+ 
 
