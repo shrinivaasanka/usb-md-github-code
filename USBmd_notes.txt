@@ -474,3 +474,13 @@ memory accesses especially for USBWWAN and USB Storage drivers.
 -----------------------------------------------------------------------------------------------------------------------------------------
 (*) Added a substring match filter to RDD map/reduce transformations chain
 (*) Presently hardcoded as "+0x" which extracts all kernel functions invoked from Kernel Address Sanitizer kern.log and their frequencies
+
+Previous profiling prints following top kernel function invocations:
+(u'last_sector_hacks.isra.1.part.2+0xc9/0x1d0', 159),
+ (u'usb_stor_disconnect+0x120/0x120', 106),
+ (u'save_stack+0x46/0xd0', 106),
+ (u'save_stack_trace+0x1b/0x20', 106),
+ (u'entry_SYSENTER_compat+0x4c/0x5b', 85),
+ (u'kthread+0x178/0x1d0', 74),
+implying heavy dependence on last_sector_hacks.isra gcc optimization. Discussion on https://groups.google.com/forum/#!topic/linux.kernel/IYBXrW7K2Vc shows it to be an old kernel bug.
+
