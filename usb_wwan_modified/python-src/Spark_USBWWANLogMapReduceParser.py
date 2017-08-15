@@ -14,7 +14,7 @@
 #* along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #*
 #--------------------------------------------------------------------------------------------------------
-#Copyright (C):
+#Copyleft (Copyright+):
 #Srinivasan Kannan (alias) Ka.Shrinivaasan (alias) Shrinivas Kannan
 #Ph: 9791499106, 9003082186
 #Krishna iResearch Open Source Products Profiles:
@@ -36,24 +36,26 @@
 from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext, Row 
 import operator
+import pprint
 
-def mapFunction(printbufferline):
-     #for i in printbufferline.split(":"):
-     return (printbufferline,1)
+def mapFunction(word):
+     return (word,1)
  
 def reduceFunction(value1,value2):
      return value1+value2
 
 
 spcon=SparkContext() 
-input=open('../testlogs/kern.log.print_buffer_byte','r')
-paralleldata=spcon.parallelize(input.readlines())
-printbuflines=paralleldata.filter(lambda printbufline: printbufline)
-k=printbuflines.map(mapFunction).reduceByKey(reduceFunction)
+#input=open('../testlogs/kern.log.print_buffer_byte','r')
+input=spcon.textFile('../testlogs/kern.log.KernelAddressSanitizer_4.10.3_64bit_kernel.15August2017')
+#paralleldata=spcon.parallelize(input.readlines())
+#printbufwords=paralleldata.filter(lambda printbufline: printbufline.split())
+#print printbufwords
+k=input.flatMap(lambda line:line.split()).map(mapFunction).reduceByKey(reduceFunction)
 dict_k=dict(k.collect())
 s = sorted(dict_k.items(),key=operator.itemgetter(1), reverse=True)
 print "Spark MapReduce results:"
-print s
+pprint.pprint(s)
 
 ############################
 sqlContext=SQLContext(spcon)
@@ -62,6 +64,6 @@ bytes_stream_schema.registerTempTable("USBWWAN_bytes_stream")
 query_results=sqlContext.sql("SELECT * FROM USBWWAN_bytes_stream")
 dict_query_results=dict(query_results.collect())
 print "SparkSQL DataFrame query results:"
-print dict_query_results
+pprint.pprint(dict_query_results)
 print "Cardinality of Stream Dataset:"
 print len(dict_query_results)
