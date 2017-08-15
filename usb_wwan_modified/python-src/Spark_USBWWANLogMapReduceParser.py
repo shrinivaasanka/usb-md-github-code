@@ -39,19 +39,20 @@ import operator
 import pprint
 
 def mapFunction(word):
-     return (word,1)
+     	return (word,1)
  
 def reduceFunction(value1,value2):
-     return value1+value2
+	return value1+value2
 
 
 spcon=SparkContext() 
+filt="+0x"
 #input=open('../testlogs/kern.log.print_buffer_byte','r')
 input=spcon.textFile('../testlogs/kern.log.KernelAddressSanitizer_4.10.3_64bit_kernel.15August2017')
 #paralleldata=spcon.parallelize(input.readlines())
 #printbufwords=paralleldata.filter(lambda printbufline: printbufline.split())
 #print printbufwords
-k=input.flatMap(lambda line:line.split()).map(mapFunction).reduceByKey(reduceFunction)
+k=input.flatMap(lambda line:line.split()).filter(lambda line: filt in line).map(mapFunction).reduceByKey(reduceFunction)
 dict_k=dict(k.collect())
 s = sorted(dict_k.items(),key=operator.itemgetter(1), reverse=True)
 print "Spark MapReduce results:"
