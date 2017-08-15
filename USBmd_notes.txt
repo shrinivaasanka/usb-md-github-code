@@ -456,6 +456,7 @@ Aug 13 14:53:17 localhost kernel: [   47.797146]  kthread+0x178/0x1d0
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 (FEATURE-DONE) Spark Cloud Analytics for Linux Kernel 4.10.3 64 bit with Kernel Address Sanitizer debug logging enabled - 15 August 2017
+- Commits 1
 -----------------------------------------------------------------------------------------------------------------------------------------
 (*) Upgraded Spark version to 2.1.0 on Hadoop 2.7
 (*) Changed to SparkContext text file instead of reading the input kernel log in python I/O
@@ -466,3 +467,10 @@ memory accesses especially for USBWWAN and USB Storage drivers.
 (*) Particularly useful in malware related untoward memory access and traffic analysis
 (*) Unifies Kernel Address Sanitizer, USB storage/WLAN driver and Spark Cloud for analytics
 (*) Logs for this have been committed to testlogs/ and python-src/testlogs
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+(FEATURE-DONE) Spark Cloud Analytics for Linux Kernel 4.10.3 64 bit with Kernel Address Sanitizer debug logging enabled - 15 August 2017
+- Commits 2
+-----------------------------------------------------------------------------------------------------------------------------------------
+(*) Added a substring match filter to RDD map/reduce transformations chain
+(*) Presently hardcoded as "+0x" which extracts all kernel functions invoked from Kernel Address Sanitizer kern.log and their frequencies
