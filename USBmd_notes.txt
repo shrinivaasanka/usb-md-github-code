@@ -453,3 +453,16 @@ Aug 13 14:53:17 localhost kernel: [   47.797146]  ? pwq_dec_nr_in_flight+0x8c/0x
 Aug 13 14:53:17 localhost kernel: [   47.797146]  process_one_work+0x2c6/0x7d0
 Aug 13 14:53:17 localhost kernel: [   47.797146]  worker_thread+0x90/0x850
 Aug 13 14:53:17 localhost kernel: [   47.797146]  kthread+0x178/0x1d0
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+(FEATURE-DONE) Spark Cloud Analytics for Linux Kernel 4.10.3 64 bit with Kernel Address Sanitizer debug logging enabled - 15 August 2017
+-----------------------------------------------------------------------------------------------------------------------------------------
+(*) Upgraded Spark version to 2.1.0 on Hadoop 2.7
+(*) Changed to SparkContext text file instead of reading the input kernel log in python I/O
+(*) Added flatMap to front of MapReduce chain of transformations for tokenizer
+(*) Changed the input kernel log to 64bit 4.10.3 Kernel Address Sanitizer enabled kern.log which prints lot of debugging information on
+memory accesses especially for USBWWAN and USB Storage drivers.
+(*) This is an alternative to traditional promiscuous USB Analyzers like WireShark to get kernel stack traces for USB and WLAN operations.
+(*) Particularly useful in malware related untoward memory access and traffic analysis
+(*) Unifies Kernel Address Sanitizer, USB storage/WLAN driver and Spark Cloud for analytics
+(*) Logs for this have been committed to testlogs/ and python-src/testlogs
