@@ -484,3 +484,10 @@ Previous profiling prints following top kernel function invocations:
  (u'kthread+0x178/0x1d0', 74),
 implying heavy dependence on last_sector_hacks.isra gcc optimization. Discussion on https://groups.google.com/forum/#!topic/linux.kernel/IYBXrW7K2Vc shows it to be an old kernel bug.
 
+--------------------------------------------------------------------------------------------------------------
+USBWWAN Kernel Log Spark Analyzer Update - Refactoring to a new python function - 18 June 2018
+--------------------------------------------------------------------------------------------------------------
+1. Spark Log Analyzer Spark_USBWWANLogMapReduceParser.py has been changed to modularize the pattern extraction
+by defining a new function accepting kern.log file, pattern and filter and also creates Spark DataFrame SQL
+table and queries it.
+2. This is similar to NeuronRain AsFer log_mapreducer()
